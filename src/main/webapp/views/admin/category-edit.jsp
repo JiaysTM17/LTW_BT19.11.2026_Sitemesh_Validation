@@ -1,22 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<!DOCTYPE html>
-<html lang="vi">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cập Nhật Danh Mục - JPA 3.0</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Cập Nhật Danh Mục | HCMUTE Admin</title>
     <style>
-        body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .card-header-gradient { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; }
         .img-preview { width: 160px; height: 120px; object-fit: cover; border-radius: 8px; border: 2px solid #e2e8f0; }
     </style>
 </head>
 <body>
-<div class="container py-4">
+<div class="container py-2">
     <div class="row justify-content-center">
         <div class="col-lg-7">
             <div class="card shadow-sm border-0">
@@ -24,13 +17,20 @@
                     <h5 class="mb-0"><i class="fa-solid fa-pen-to-square me-2"></i>CHỈNH SỬA DANH MỤC</h5>
                 </div>
                 <div class="card-body p-4">
+                    <c:if test="${not empty errorMessage || not empty error}">
+                        <div class="alert alert-danger py-2 small d-flex align-items-center mb-3" role="alert">
+                            <i class="fa-solid fa-circle-exclamation me-2"></i>
+                            <div>${not empty errorMessage ? errorMessage : error}</div>
+                        </div>
+                    </c:if>
+
                     <form action="<c:url value='/admin/category/update'/>" method="post" enctype="multipart/form-data">
                         <!-- ID ẩn -->
                         <input type="hidden" name="categoryid" value="${cate.categoryid}">
 
                         <!-- Tên danh mục -->
                         <div class="mb-3">
-                            <label for="categoryname" class="form-label fw-semibold">Tên danh mục (Category name):</label>
+                            <label for="categoryname" class="form-label fw-semibold">Tên danh mục (Category name) <span class="text-danger">*</span>:</label>
                             <input type="text" class="form-control" id="categoryname" name="categoryname" value="${cate.categoryname}" required>
                         </div>
 
@@ -95,4 +95,3 @@
     </div>
 </div>
 </body>
-</html>

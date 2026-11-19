@@ -1,16 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<!DOCTYPE html>
-<html lang="vi">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh Sách Video Của User (Phân Trang 6 Video/Trang) | HCMUTE JPA</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Danh Sách Video Của User (Phân Trang) | HCMUTE JPA</title>
     <style>
-        body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .page-header-box { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; border-radius: 12px; padding: 25px; margin-bottom: 30px; }
         .video-card { transition: transform 0.25s ease, box-shadow 0.25s ease; border: none; border-radius: 12px; overflow: hidden; height: 100%; display: flex; flex-direction: column; }
         .video-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important; }
@@ -26,11 +19,7 @@
     </style>
 </head>
 <body>
-
-    <!-- Header Navbar -->
-    <jsp:include page="/views/common/navbar.jsp" />
-
-    <div class="container py-4">
+    <div class="container py-2">
         <!-- Banner thông tin User & Tiêu đề -->
         <div class="page-header-box shadow-sm d-flex flex-wrap justify-content-between align-items-center">
             <div>
@@ -48,32 +37,31 @@
                     </c:choose>
                 </p>
             </div>
-            <div class="mt-3 mt-md-0">
-                <span class="badge bg-warning text-dark fs-6 px-3 py-2 shadow-sm rounded-pill">
-                    <i class="fa-solid fa-video me-1"></i>Tổng số: <strong>${totalVideos}</strong> video (6 video / trang)
+            <div>
+                <span class="badge bg-warning text-dark px-3 py-2 fw-semibold fs-6">
+                    <i class="fa-solid fa-calculator me-1"></i>Tổng số: ${totalVideos} Video
                 </span>
             </div>
         </div>
 
-        <!-- Yêu cầu 4.3: Hiển thị danh sách video phân trang 6sp/trang -->
+        <!-- Danh sách video phân trang (Yêu cầu 4.3: Hiển thị 6 video 1 trang) -->
         <c:choose>
-            <c:when test="${empty videos}">
-                <div class="alert alert-warning text-center py-5 rounded-4 shadow-sm">
-                    <i class="fa-solid fa-box-open fa-3x text-warning mb-3"></i>
-                    <h5 class="fw-bold">Chưa có video nào của người dùng này!</h5>
-                    <p class="text-muted">Bạn có thể thêm video mới vào hệ thống thông qua trang quản trị Admin.</p>
-                    <a href="<c:url value='/admin/video/add'/>" class="btn btn-primary mt-2">
-                        <i class="fa-solid fa-plus me-1"></i>Thêm Video Mới
+            <c:when test="${empty videoList}">
+                <div class="alert alert-info text-center py-5 rounded-4 shadow-sm">
+                    <i class="fa-solid fa-box-open fa-3x text-primary mb-3"></i>
+                    <h5 class="fw-bold">Chưa có video nào phù hợp!</h5>
+                    <p class="text-muted mb-3">Người dùng này chưa đăng tải video nào lên hệ thống.</p>
+                    <a href="<c:url value='/home'/>" class="btn btn-outline-primary">
+                        <i class="fa-solid fa-house me-1"></i>Quay lại trang chủ
                     </a>
                 </div>
             </c:when>
             <c:otherwise>
-                <!-- Grid 6 video / trang -->
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
-                    <c:forEach items="${videos}" var="v">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mb-4">
+                    <c:forEach items="${videoList}" var="v">
                         <div class="col">
                             <div class="card video-card shadow-sm">
-                                <!-- Video Poster -->
+                                <!-- Video Poster with Play Overlay -->
                                 <a href="<c:url value='/video/detail?id=${v.videoId}'/>" class="video-poster-box text-decoration-none">
                                     <c:choose>
                                         <c:when test="${v.poster != null && v.poster.startsWith('http')}">
@@ -84,7 +72,7 @@
                                                  onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80'">
                                         </c:when>
                                         <c:otherwise>
-                                            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80" alt="Poster" class="video-poster-img">
+                                            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80" alt="Video Poster" class="video-poster-img">
                                         </c:otherwise>
                                     </c:choose>
                                     <div class="play-overlay">
@@ -92,34 +80,27 @@
                                     </div>
                                 </a>
 
-                                <!-- Card Body -->
                                 <div class="card-body p-3 d-flex flex-column justify-content-between">
                                     <div>
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="badge bg-primary-subtle text-primary fw-semibold px-2 py-1 rounded">
-                                                <i class="fa-solid fa-folder me-1"></i>${v.category != null ? v.category.categoryname : 'Mặc định'}
+                                                <i class="fa-solid fa-folder me-1"></i>${v.category != null ? v.category.categoryname : 'Chung'}
                                             </span>
                                             <span class="badge-views">
-                                                <i class="fa-solid fa-eye me-1 text-secondary"></i>${v.views} lượt xem
+                                                <i class="fa-solid fa-eye me-1 text-secondary"></i>${v.views}
                                             </span>
                                         </div>
-                                        <h5 class="card-title mb-2">
-                                            <!-- Yêu cầu 4.4: Bấm chuột vào tiêu đề để xem chi tiết và play video -->
+                                        <h6 class="card-title mb-2">
                                             <a href="<c:url value='/video/detail?id=${v.videoId}'/>" class="video-title-link" title="${v.title}">
                                                 ${v.title}
                                             </a>
-                                        </h5>
-                                        <p class="card-text text-muted small" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                            ${v.description != null ? v.description : 'Không có mô tả cho video này.'}
-                                        </p>
+                                        </h6>
                                     </div>
                                     <div class="pt-2 border-top mt-2 d-flex justify-content-between align-items-center small text-muted">
                                         <span>
-                                            <i class="fa-solid fa-user me-1 text-primary"></i>${v.user != null ? (not empty v.user.fullname ? v.user.fullname : v.user.username) : 'Quản trị'}
+                                            <i class="fa-solid fa-user me-1 text-primary"></i>${v.user != null ? (not empty v.user.fullname ? v.user.fullname : v.user.username) : 'Quản trị viên'}
                                         </span>
-                                        <a href="<c:url value='/video/detail?id=${v.videoId}'/>" class="btn btn-sm btn-outline-danger py-0 px-2 rounded-pill">
-                                            <i class="fa-solid fa-play me-1"></i>Play
-                                        </a>
+                                        <span class="text-secondary small font-monospace">${v.videoId}</span>
                                     </div>
                                 </div>
                             </div>
@@ -127,10 +108,10 @@
                     </c:forEach>
                 </div>
 
-                <!-- Phân trang 6 video/trang -->
+                <!-- Phân trang Pagination (Yêu cầu 4.3: 6 video / trang) -->
                 <c:if test="${totalPages > 1}">
-                    <nav aria-label="Page navigation" class="d-flex justify-content-center">
-                        <ul class="pagination shadow-sm">
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
                             <!-- Nút Trước -->
                             <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
                                 <a class="page-link" href="<c:url value='/video?userId=${targetUserId}&page=${currentPage - 1}'/>" aria-label="Previous">
@@ -138,10 +119,10 @@
                                 </a>
                             </li>
 
-                            <!-- Các trang 1..totalPages -->
-                            <c:forEach begin="1" end="${totalPages}" var="p">
-                                <li class="page-item ${p == currentPage ? 'active' : ''}">
-                                    <a class="page-link" href="<c:url value='/video?userId=${targetUserId}&page=${p}'/>">${p}</a>
+                            <!-- Các trang số -->
+                            <c:forEach begin="1" end="${totalPages}" var="pageIndex">
+                                <li class="page-item ${currentPage == pageIndex ? 'active' : ''}">
+                                    <a class="page-link" href="<c:url value='/video?userId=${targetUserId}&page=${pageIndex}'/>">${pageIndex}</a>
                                 </li>
                             </c:forEach>
 
@@ -157,9 +138,4 @@
             </c:otherwise>
         </c:choose>
     </div>
-
-    <!-- Footer -->
-    <jsp:include page="/views/common/footer.jsp" />
-
 </body>
-</html>

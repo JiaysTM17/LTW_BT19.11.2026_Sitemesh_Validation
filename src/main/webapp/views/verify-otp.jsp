@@ -1,25 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<!DOCTYPE html>
-<html lang="vi">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xác Thực Mã OTP | HCMUTE JPA</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { background-color: #f1f5f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .auth-card { max-width: 480px; margin: 50px auto; border-radius: 16px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.08); overflow: hidden; }
+        .auth-card { max-width: 480px; margin: 40px auto; border-radius: 16px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.08); overflow: hidden; }
         .auth-header { background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; padding: 25px 20px; text-align: center; }
         .otp-input { letter-spacing: 8px; font-size: 1.6rem; text-align: center; font-weight: 700; color: #1e293b; }
     </style>
 </head>
 <body>
-
-    <jsp:include page="/views/common/navbar.jsp" />
-
     <div class="container">
         <div class="card auth-card">
             <div class="auth-header">
@@ -28,16 +18,16 @@
                 <p class="small text-white-50 mb-0">Xác thực mã OTP 6 số qua Email</p>
             </div>
             <div class="card-body p-4">
-                <c:if test="${not empty errorMessage}">
+                <c:if test="${not empty errorMessage || not empty error}">
                     <div class="alert alert-danger py-2 small d-flex align-items-center mb-3" role="alert">
                         <i class="fa-solid fa-circle-exclamation me-2"></i>
-                        <div>${errorMessage}</div>
+                        <div>${not empty errorMessage ? errorMessage : error}</div>
                     </div>
                 </c:if>
-                <c:if test="${not empty successMessage}">
+                <c:if test="${not empty successMessage || not empty message}">
                     <div class="alert alert-success py-2 small d-flex align-items-center mb-3" role="alert">
                         <i class="fa-solid fa-circle-check me-2"></i>
-                        <div>${successMessage}</div>
+                        <div>${not empty successMessage ? successMessage : message}</div>
                     </div>
                 </c:if>
 
@@ -77,8 +67,4 @@
             </div>
         </div>
     </div>
-
-    <jsp:include page="/views/common/footer.jsp" />
-
 </body>
-</html>

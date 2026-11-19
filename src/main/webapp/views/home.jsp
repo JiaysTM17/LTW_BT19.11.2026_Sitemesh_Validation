@@ -1,17 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<!DOCTYPE html>
-<html lang="vi">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang Chủ - 10 Video Mới Nhất | HCMUTE JPA</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .hero-banner { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); color: white; padding: 45px 0; margin-bottom: 30px; border-radius: 0 0 20px 20px; }
+        .hero-banner { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); color: white; padding: 45px 0; margin-bottom: 30px; border-radius: 12px; }
         .video-card { transition: transform 0.25s ease, box-shadow 0.25s ease; border: none; border-radius: 12px; overflow: hidden; height: 100%; display: flex; flex-direction: column; }
         .video-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important; }
         .video-poster-box { position: relative; width: 100%; padding-top: 56.25%; background-color: #000; overflow: hidden; }
@@ -25,14 +18,10 @@
     </style>
 </head>
 <body>
-
-    <!-- Header Navbar -->
-    <jsp:include page="/views/common/navbar.jsp" />
-
     <!-- Hero Banner -->
-    <div class="hero-banner shadow-sm text-center">
-        <div class="container">
-            <h1 class="display-6 fw-bold mb-2">HỆ THỐNG VIDEO TRỰC TUYẾN JPA 3.0 & JAKARTA EE</h1>
+    <div class="container">
+        <div class="hero-banner shadow-sm text-center">
+            <h1 class="display-6 fw-bold mb-2">HỆ THỐNG VIDEO TRỰC TUYẾN JPA 3.0 & SITEMESH 3</h1>
             <p class="lead mb-0 text-light opacity-75 fs-6">Đăng ký xác thực OTP qua Email - Đăng nhập BCrypt - Xem và Play 10 Video mới nhất</p>
         </div>
     </div>
@@ -98,7 +87,6 @@
                                             </span>
                                         </div>
                                         <h6 class="card-title mb-2">
-                                            <!-- Yêu cầu 4.4: Bấm chuột vào tiêu đề để xem chi tiết và play video -->
                                             <a href="<c:url value='/video/detail?id=${v.videoId}'/>" class="video-title-link" title="${v.title}">
                                                 ${v.title}
                                             </a>
@@ -118,9 +106,4 @@
             </c:otherwise>
         </c:choose>
     </div>
-
-    <!-- Footer -->
-    <jsp:include page="/views/common/footer.jsp" />
-
 </body>
-</html>
