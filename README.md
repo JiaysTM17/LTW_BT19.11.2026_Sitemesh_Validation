@@ -3,7 +3,7 @@
 ## KHOA CÔNG NGHỆ THÔNG TIN
 
 ### MÔN HỌC: LẬP TRÌNH WEB (WEBPR330479)
-**BÀI TẬP THỰC HÀNH - BUỔI HỌC NGÀY 16/11/2026**
+**BÀI TẬP THỰC HÀNH - BUỔI HỌC THỨ 5 NGÀY 19/11/2026**
 
 ---
 
@@ -17,36 +17,39 @@
 
 ---
 
-### NỘI DUNG THỰC HIỆN
-1. **Kích hoạt tài khoản bằng OTP qua email khi đăng ký tài khoản:**
-   - Đăng ký tài khoản mới với trạng thái mặc định `status = 0` (chưa kích hoạt).
-   - Tự động sinh mã xác nhận OTP gồm 6 chữ số và gửi qua email đăng ký bằng Jakarta Mail.
-   - Nhập đúng OTP để kích hoạt tài khoản (`status = 1`).
-2. **Đăng nhập với mật khẩu được mã hóa (hash password) & Đăng xuất:**
-   - Mật khẩu người dùng được băm an toàn với giải thuật BCrypt (`org.mindrot:jbcrypt`).
-   - Kiểm tra xác thực mật khẩu băm và chỉ cho phép đăng nhập khi tài khoản đã kích hoạt (`status == 1`).
-   - Đăng xuất hủy session và xóa cookie ghi nhớ.
-3. **Quên mật khẩu gửi mã xác nhận OTP qua email:**
-   - Nhập email để nhận mã xác nhận OTP.
-   - Xác thực OTP và cập nhật mật khẩu mới (mã hóa BCrypt).
-4. **Bảng Videos liên hệ 1 - n với bảng users và các chức năng:**
-   - 4.1. Thực hiện đầy đủ CRUD cho bảng Videos (upload file multipart theo slide hướng dẫn `10_UploadFile_servlet_jakarta.pdf`).
-   - 4.2. Hiển thị 10 video mới nhất lên trang chủ (`/home`).
-   - 4.3. Hiển thị tất cả video của user và phân trang 6sp/trang tại URL `/video`.
-   - 4.4. Hiển thị chi tiết và play 01 video khi bấm chuột vào tiêu đề của video đó trên trang chủ `/home` và `/video` (URL `/video/detail?id=...`), tự động tăng lượt xem.
-5. **Báo cáo chi tiết:** File Word `BAO_CAO_BAI_TAP_16.11.2026.docx`.
+### NỘI DUNG THỰC HIỆN BÀI TẬP (19/11/2026)
+
+#### 1. Cấu hình Sitemesh Decorator 3 với 01 Template Bootstrap:
+- Tích hợp thư viện `sitemesh-webfilter` phiên bản `3.2.2` tương thích Jakarta EE 10 / Servlet 6.0 (`pom.xml`).
+- Cấu hình bộ lọc `org.sitemesh.config.ConfigurableSiteMeshFilter` trong `web.xml` ánh xạ `/*`.
+- Tạo file cấu hình `WEB-INF/sitemesh3.xml`:
+  - Định tuyến layout người dùng `/*` -> `/decorators/web.jsp`.
+  - Định tuyến layout quản trị `/admin/*` -> `/decorators/admin.jsp`.
+  - Loại trừ trang tĩnh và tài nguyên tải xuống (`/assets/*`, `/image*`, `/file*`, `/api*`).
+- Xây dựng giao diện Decorator Template Bootstrap 5 hiện đại:
+  - Header, Navbar điều hướng, Content Body nhúng qua `<sitemesh:write property="body"/>`, Footer đồng bộ.
+  - Phân tách các khối dùng chung vào thư mục `commons/web/` và `commons/admin/` (`header.jsp`, `footer.jsp`).
+  - Tối ưu hóa các JSP nội dung trong thư mục `views/` và `views/admin/` để Sitemesh tự động ráp layout sạch đẹp.
+
+#### 2. Thực hiện Validation cho những chức năng có FORM (Client-side & Server-side):
+- **Client-side Validation:**
+  - Áp dụng Bootstrap 5 form validation (`needs-validation`, `novalidate`, `invalid-feedback`).
+  - Kiểm tra tức thời các ràng buộc HTML5 (`required`, `type="email"`, `minlength`, `pattern`).
+  - Kiểm tra khớp mật khẩu xác nhận bằng JavaScript trước khi gửi form.
+- **Server-side Validation:**
+  - **Form Login:** Kiểm tra bắt buộc nhập, độ dài tối thiểu của username (>= 3) và password (>= 6), thông báo lỗi rõ ràng và giữ lại username.
+  - **Form Register:** Kiểm tra đầy đủ thông tin bắt buộc, biểu thức regex email, regex số điện thoại, độ dài mật khẩu (>= 6), kiểm tra xác nhận mật khẩu khớp nhau, kiểm tra trùng lặp tài khoản và email trong cơ sở dữ liệu.
+  - **Form Forgot Password & Reset Password:** Kiểm tra định dạng email regex, kiểm tra mã OTP, độ dài mật khẩu mới (>= 6), khớp mật khẩu xác nhận.
+  - **Form Insert/Edit Category:** Kiểm tra tên danh mục không rỗng, độ dài tối thiểu 2 ký tự, xử lý an toàn dữ liệu số trạng thái `status` và `categoryid`.
+  - **Form Insert/Edit Video:** Kiểm tra mã video (không rỗng, định dạng ký tự hợp lệ, kiểm tra trùng lặp ID khi thêm mới), kiểm tra tiêu đề video, bắt buộc chọn danh mục `categoryId`, giữ lại dữ liệu form khi có lỗi.
 
 ---
 
 ### HƯỚNG DẪN CÀI ĐẶT & CHẠY DỰ ÁN
-1. Import cơ sở dữ liệu từ file `database.sql` vào MySQL (hoặc SQL Server).
+1. Import cơ sở dữ liệu từ file `database.sql` vào MySQL.
 2. Kiểm tra cấu hình kết nối trong file `src/main/resources/META-INF/persistence.xml`.
-3. Chạy kiểm thử tự động toàn bộ 7 bài test:
+3. Đóng gói file WAR:
    ```bash
-   mvn compile exec:java -Dexec.mainClass="vn.iotstar.config.Test"
+   mvn clean package -DskipTests
    ```
-4. Đóng gói file WAR:
-   ```bash
-   mvn clean package
-   ```
-5. Deploy file WAR sinh ra trong thư mục `target/24110032_TruongGiaKiet_BT16.11.2026.war` lên Apache Tomcat 10.1+.
+4. Deploy file WAR sinh ra trong thư mục `target/24110032_TruongGiaKiet_BT19.11.2026.war` lên Apache Tomcat 10.1+.
