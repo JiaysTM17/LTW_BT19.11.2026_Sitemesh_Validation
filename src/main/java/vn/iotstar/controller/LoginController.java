@@ -65,8 +65,28 @@ public class LoginController extends HttpServlet {
         String remember = req.getParameter("remember");
 
         if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-            req.setAttribute("error", "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
-            req.setAttribute("username", username);
+            String msg = "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!";
+            req.setAttribute("errorMessage", msg);
+            req.setAttribute("error", msg);
+            req.setAttribute("username", username != null ? username.trim() : "");
+            req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
+            return;
+        }
+
+        if (username.trim().length() < 3) {
+            String msg = "Tên đăng nhập hoặc email phải có tối thiểu 3 ký tự!";
+            req.setAttribute("errorMessage", msg);
+            req.setAttribute("error", msg);
+            req.setAttribute("username", username.trim());
+            req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
+            return;
+        }
+
+        if (password.trim().length() < 6) {
+            String msg = "Mật khẩu phải có tối thiểu 6 ký tự!";
+            req.setAttribute("errorMessage", msg);
+            req.setAttribute("error", msg);
+            req.setAttribute("username", username.trim());
             req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
             return;
         }
@@ -91,14 +111,15 @@ public class LoginController extends HttpServlet {
 
             resp.sendRedirect(req.getContextPath() + "/home");
         } catch (Exception e) {
-            String errorMsg = e.getMessage();
-            if (errorMsg != null && errorMsg.contains("chưa được kích hoạt")) {
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!";
+            if (errorMsg.contains("chưa được kích hoạt")) {
                 // Điều hướng sang trang kích hoạt OTP
                 resp.sendRedirect(req.getContextPath() + "/verify-otp?email=" + username.trim() + "&msg=otp_sent");
                 return;
             }
+            req.setAttribute("errorMessage", errorMsg);
             req.setAttribute("error", errorMsg);
-            req.setAttribute("username", username);
+            req.setAttribute("username", username.trim());
             req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
         }
     }

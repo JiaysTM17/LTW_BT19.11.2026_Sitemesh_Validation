@@ -64,7 +64,18 @@ public class ForgotPasswordController extends HttpServlet {
     private void handleForgotPassword(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");
         if (email == null || email.trim().isEmpty()) {
-            req.setAttribute("errorMessage", "Vui lòng nhập địa chỉ Email đã đăng ký!");
+            String msg = "Vui lòng nhập địa chỉ Email đã đăng ký!";
+            req.setAttribute("errorMessage", msg);
+            req.setAttribute("error", msg);
+            req.getRequestDispatcher("/views/forgot-password.jsp").forward(req, resp);
+            return;
+        }
+
+        if (!email.trim().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+            String msg = "Địa chỉ email không đúng định dạng (ví dụ: user@example.com)!";
+            req.setAttribute("errorMessage", msg);
+            req.setAttribute("error", msg);
+            req.setAttribute("email", email.trim());
             req.getRequestDispatcher("/views/forgot-password.jsp").forward(req, resp);
             return;
         }
@@ -78,8 +89,10 @@ public class ForgotPasswordController extends HttpServlet {
             }
             resp.sendRedirect(req.getContextPath() + "/reset-password?email=" + email.trim() + "&msg=otp_sent");
         } catch (Exception e) {
-            req.setAttribute("errorMessage", e.getMessage());
-            req.setAttribute("email", email);
+            String msg = e.getMessage() != null ? e.getMessage() : "Có lỗi xảy ra khi xử lý yêu cầu quên mật khẩu!";
+            req.setAttribute("errorMessage", msg);
+            req.setAttribute("error", msg);
+            req.setAttribute("email", email.trim());
             req.getRequestDispatcher("/views/forgot-password.jsp").forward(req, resp);
         }
     }
@@ -90,31 +103,52 @@ public class ForgotPasswordController extends HttpServlet {
         String newPassword = req.getParameter("newPassword");
         String confirmPassword = req.getParameter("confirmPassword");
 
-        if (otp == null || otp.trim().isEmpty() || newPassword == null || newPassword.trim().isEmpty()) {
-            req.setAttribute("errorMessage", "Vui lòng điền đầy đủ mã OTP và mật khẩu mới!");
+        email = email != null ? email.trim() : "";
+        otp = otp != null ? otp.trim() : "";
+        newPassword = newPassword != null ? newPassword.trim() : "";
+        confirmPassword = confirmPassword != null ? confirmPassword.trim() : "";
+
+        if (otp.isEmpty() || newPassword.isEmpty()) {
+            String msg = "Vui lòng điền đầy đủ mã OTP và mật khẩu mới!";
+            req.setAttribute("errorMessage", msg);
+            req.setAttribute("error", msg);
+            req.setAttribute("email", email);
+            req.getRequestDispatcher("/views/reset-password.jsp").forward(req, resp);
+            return;
+        }
+
+        if (newPassword.length() < 6) {
+            String msg = "Mật khẩu mới phải có tối thiểu 6 ký tự!";
+            req.setAttribute("errorMessage", msg);
+            req.setAttribute("error", msg);
             req.setAttribute("email", email);
             req.getRequestDispatcher("/views/reset-password.jsp").forward(req, resp);
             return;
         }
 
         if (!newPassword.equals(confirmPassword)) {
-            req.setAttribute("errorMessage", "Mật khẩu xác nhận không khớp!");
+            String msg = "Mật khẩu xác nhận không khớp!";
+            req.setAttribute("errorMessage", msg);
+            req.setAttribute("error", msg);
             req.setAttribute("email", email);
             req.getRequestDispatcher("/views/reset-password.jsp").forward(req, resp);
             return;
         }
 
         try {
-            userService.resetPassword(email.trim(), otp.trim(), newPassword.trim());
+            userService.resetPassword(email, otp, newPassword);
             HttpSession session = req.getSession(false);
             if (session != null) {
                 session.removeAttribute("resetOtp");
                 session.removeAttribute("resetEmail");
             }
             req.setAttribute("successMessage", "Đổi mật khẩu thành công! Vui lòng đăng nhập với mật khẩu mới.");
+            req.setAttribute("message", "Đổi mật khẩu thành công! Vui lòng đăng nhập với mật khẩu mới.");
             req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
         } catch (Exception e) {
-            req.setAttribute("errorMessage", e.getMessage());
+            String msg = e.getMessage() != null ? e.getMessage() : "Đặt lại mật khẩu thất bại. Mã OTP có thể không chính xác hoặc đã hết hạn!";
+            req.setAttribute("errorMessage", msg);
+            req.setAttribute("error", msg);
             req.setAttribute("email", email);
             User u = userService.findByEmail(email);
             if (u != null) {

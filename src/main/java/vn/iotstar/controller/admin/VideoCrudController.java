@@ -121,6 +121,91 @@ public class VideoCrudController extends HttpServlet {
             } catch (Exception ignored) {
             }
 
+            // Server-side validation
+            videoId = videoId != null ? videoId.trim() : "";
+            title = title != null ? title.trim() : "";
+            description = description != null ? description.trim() : "";
+
+            if (videoId.isEmpty()) {
+                String msg = "Mã video không được để trống!";
+                req.setAttribute("errorMessage", msg);
+                req.setAttribute("error", msg);
+                Video v = new Video();
+                v.setVideoId(videoId);
+                v.setTitle(title);
+                v.setDescription(description);
+                v.setActive(active);
+                req.setAttribute("video", v);
+                req.setAttribute("categoryList", categoryService.findAll());
+                req.setAttribute("userList", userService.findAll());
+                req.getRequestDispatcher("/views/admin/video-add.jsp").forward(req, resp);
+                return;
+            }
+
+            if (!videoId.matches("^[a-zA-Z0-9_-]{2,50}$")) {
+                String msg = "Mã video chỉ gồm 2-50 ký tự chữ cái, số, gạch ngang hoặc gạch dưới!";
+                req.setAttribute("errorMessage", msg);
+                req.setAttribute("error", msg);
+                Video v = new Video();
+                v.setVideoId(videoId);
+                v.setTitle(title);
+                v.setDescription(description);
+                v.setActive(active);
+                req.setAttribute("video", v);
+                req.setAttribute("categoryList", categoryService.findAll());
+                req.setAttribute("userList", userService.findAll());
+                req.getRequestDispatcher("/views/admin/video-add.jsp").forward(req, resp);
+                return;
+            }
+
+            if (videoService.findById(videoId) != null) {
+                String msg = "Mã video '" + videoId + "' đã tồn tại trong hệ thống! Vui lòng chọn mã khác.";
+                req.setAttribute("errorMessage", msg);
+                req.setAttribute("error", msg);
+                Video v = new Video();
+                v.setVideoId(videoId);
+                v.setTitle(title);
+                v.setDescription(description);
+                v.setActive(active);
+                req.setAttribute("video", v);
+                req.setAttribute("categoryList", categoryService.findAll());
+                req.setAttribute("userList", userService.findAll());
+                req.getRequestDispatcher("/views/admin/video-add.jsp").forward(req, resp);
+                return;
+            }
+
+            if (title.isEmpty()) {
+                String msg = "Tiêu đề video không được để trống!";
+                req.setAttribute("errorMessage", msg);
+                req.setAttribute("error", msg);
+                Video v = new Video();
+                v.setVideoId(videoId);
+                v.setTitle(title);
+                v.setDescription(description);
+                v.setActive(active);
+                req.setAttribute("video", v);
+                req.setAttribute("categoryList", categoryService.findAll());
+                req.setAttribute("userList", userService.findAll());
+                req.getRequestDispatcher("/views/admin/video-add.jsp").forward(req, resp);
+                return;
+            }
+
+            if (categoryId <= 0) {
+                String msg = "Vui lòng chọn danh mục cho video!";
+                req.setAttribute("errorMessage", msg);
+                req.setAttribute("error", msg);
+                Video v = new Video();
+                v.setVideoId(videoId);
+                v.setTitle(title);
+                v.setDescription(description);
+                v.setActive(active);
+                req.setAttribute("video", v);
+                req.setAttribute("categoryList", categoryService.findAll());
+                req.setAttribute("userList", userService.findAll());
+                req.getRequestDispatcher("/views/admin/video-add.jsp").forward(req, resp);
+                return;
+            }
+
             // Nếu không chọn userId, lấy từ session account hiện tại
             if (userId <= 0) {
                 HttpSession session = req.getSession(false);
@@ -199,35 +284,71 @@ public class VideoCrudController extends HttpServlet {
         } else if (uri.contains("/admin/video/update")) {
             String videoId = req.getParameter("videoId");
             Video video = videoService.findById(videoId);
-            if (video != null) {
-                String oldPoster = video.getPoster();
-                String oldVideoUrl = video.getVideoUrl();
+            if (video == null) {
+                resp.sendRedirect(req.getContextPath() + "/admin/videos");
+                return;
+            }
 
-                String title = req.getParameter("title");
-                String description = req.getParameter("description");
-                String posterUrl = req.getParameter("posterUrl");
-                String videoUrlInput = req.getParameter("videoUrl");
-                int active = 1;
-                try {
-                    active = Integer.parseInt(req.getParameter("active"));
-                } catch (Exception ignored) {
-                }
+            String oldPoster = video.getPoster();
+            String oldVideoUrl = video.getVideoUrl();
 
-                int categoryId = 0;
-                try {
-                    categoryId = Integer.parseInt(req.getParameter("categoryId"));
-                } catch (Exception ignored) {
-                }
+            String title = req.getParameter("title");
+            String description = req.getParameter("description");
+            String posterUrl = req.getParameter("posterUrl");
+            String videoUrlInput = req.getParameter("videoUrl");
+            int active = 1;
+            try {
+                active = Integer.parseInt(req.getParameter("active"));
+            } catch (Exception ignored) {
+            }
 
-                int userId = 0;
-                try {
-                    userId = Integer.parseInt(req.getParameter("userId"));
-                } catch (Exception ignored) {
-                }
+            int categoryId = 0;
+            try {
+                categoryId = Integer.parseInt(req.getParameter("categoryId"));
+            } catch (Exception ignored) {
+            }
 
+            int userId = 0;
+            try {
+                userId = Integer.parseInt(req.getParameter("userId"));
+            } catch (Exception ignored) {
+            }
+
+            // Server-side validation
+            title = title != null ? title.trim() : "";
+            description = description != null ? description.trim() : "";
+
+            if (title.isEmpty()) {
+                String msg = "Tiêu đề video không được để trống!";
+                req.setAttribute("errorMessage", msg);
+                req.setAttribute("error", msg);
+                video.setTitle("");
+                video.setDescription(description);
+                video.setActive(active);
+                req.setAttribute("video", video);
+                req.setAttribute("categoryList", categoryService.findAll());
+                req.setAttribute("userList", userService.findAll());
+                req.getRequestDispatcher("/views/admin/video-edit.jsp").forward(req, resp);
+                return;
+            }
+
+            if (categoryId <= 0) {
+                String msg = "Vui lòng chọn danh mục cho video!";
+                req.setAttribute("errorMessage", msg);
+                req.setAttribute("error", msg);
                 video.setTitle(title);
                 video.setDescription(description);
                 video.setActive(active);
+                req.setAttribute("video", video);
+                req.setAttribute("categoryList", categoryService.findAll());
+                req.setAttribute("userList", userService.findAll());
+                req.getRequestDispatcher("/views/admin/video-edit.jsp").forward(req, resp);
+                return;
+            }
+
+            video.setTitle(title);
+            video.setDescription(description);
+            video.setActive(active);
 
                 if (categoryId > 0) {
                     Category category = categoryService.findById(categoryId);
@@ -286,7 +407,6 @@ public class VideoCrudController extends HttpServlet {
                 }
 
                 videoService.update(video);
-            }
             resp.sendRedirect(req.getContextPath() + "/admin/videos");
         }
     }

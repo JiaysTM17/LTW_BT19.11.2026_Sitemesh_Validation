@@ -72,12 +72,45 @@ public class CategoryController extends HttpServlet {
         if (url.contains("/admin/category/insert")) {
             // Lấy dữ liệu từ form
             String categoryname = req.getParameter("categoryname");
-            int status = Integer.parseInt(req.getParameter("status"));
+            String statusStr = req.getParameter("status");
             String images = req.getParameter("images");
+
+            int status = 1;
+            try {
+                if (statusStr != null) {
+                    status = Integer.parseInt(statusStr);
+                }
+            } catch (Exception ignored) {
+            }
+
+            // Server-side validation
+            if (categoryname == null || categoryname.trim().isEmpty()) {
+                String msg = "Tên danh mục không được để trống!";
+                req.setAttribute("errorMessage", msg);
+                req.setAttribute("error", msg);
+                Category cat = new Category();
+                cat.setCategoryname(categoryname != null ? categoryname.trim() : "");
+                cat.setStatus(status);
+                req.setAttribute("cate", cat);
+                req.getRequestDispatcher("/views/admin/category-add.jsp").forward(req, resp);
+                return;
+            }
+
+            if (categoryname.trim().length() < 2) {
+                String msg = "Tên danh mục phải có tối thiểu 2 ký tự!";
+                req.setAttribute("errorMessage", msg);
+                req.setAttribute("error", msg);
+                Category cat = new Category();
+                cat.setCategoryname(categoryname.trim());
+                cat.setStatus(status);
+                req.setAttribute("cate", cat);
+                req.getRequestDispatcher("/views/admin/category-add.jsp").forward(req, resp);
+                return;
+            }
 
             // Đưa dữ liệu vào model
             Category category = new Category();
-            category.setCategoryname(categoryname);
+            category.setCategoryname(categoryname.trim());
             category.setStatus(status);
 
             String fname = "";
@@ -111,15 +144,69 @@ public class CategoryController extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/admin/categories");
         } else if (url.contains("/admin/category/update")) {
             // Lấy dữ liệu từ form update
-            int categoryid = Integer.parseInt(req.getParameter("categoryid"));
+            String categoryidStr = req.getParameter("categoryid");
             String categoryname = req.getParameter("categoryname");
-            int status = Integer.parseInt(req.getParameter("status"));
+            String statusStr = req.getParameter("status");
             String images = req.getParameter("images");
+
+            int categoryid = 0;
+            try {
+                if (categoryidStr != null) {
+                    categoryid = Integer.parseInt(categoryidStr);
+                }
+            } catch (Exception ignored) {
+            }
+
+            int status = 1;
+            try {
+                if (statusStr != null) {
+                    status = Integer.parseInt(statusStr);
+                }
+            } catch (Exception ignored) {
+            }
+
+            if (categoryid <= 0) {
+                resp.sendRedirect(req.getContextPath() + "/admin/categories");
+                return;
+            }
+
+            // Server-side validation
+            if (categoryname == null || categoryname.trim().isEmpty()) {
+                String msg = "Tên danh mục không được để trống!";
+                req.setAttribute("errorMessage", msg);
+                req.setAttribute("error", msg);
+                Category cat = cateService.findById(categoryid);
+                if (cat == null) {
+                    cat = new Category();
+                    cat.setCategoryid(categoryid);
+                }
+                cat.setCategoryname("");
+                cat.setStatus(status);
+                req.setAttribute("cate", cat);
+                req.getRequestDispatcher("/views/admin/category-edit.jsp").forward(req, resp);
+                return;
+            }
+
+            if (categoryname.trim().length() < 2) {
+                String msg = "Tên danh mục phải có tối thiểu 2 ký tự!";
+                req.setAttribute("errorMessage", msg);
+                req.setAttribute("error", msg);
+                Category cat = cateService.findById(categoryid);
+                if (cat == null) {
+                    cat = new Category();
+                    cat.setCategoryid(categoryid);
+                }
+                cat.setCategoryname(categoryname.trim());
+                cat.setStatus(status);
+                req.setAttribute("cate", cat);
+                req.getRequestDispatcher("/views/admin/category-edit.jsp").forward(req, resp);
+                return;
+            }
 
             Category category = cateService.findById(categoryid);
             if (category != null) {
                 String fileold = category.getImages();
-                category.setCategoryname(categoryname);
+                category.setCategoryname(categoryname.trim());
                 category.setStatus(status);
 
                 String fname = "";
