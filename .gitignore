@@ -1,0 +1,25 @@
+target/
+*.war
+*.class
+
+# Log files
+*.log
+
+# Eclipse
+.classpath
+.project
+.settings/
+.factorypath
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Visual Studio Code
+.vscode/
+
+# OS metadata
+Thumbs.db
+Desktop.ini
+.DS_Store
