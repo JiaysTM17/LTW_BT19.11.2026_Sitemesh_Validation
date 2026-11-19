@@ -43,12 +43,15 @@
                     Email xác thực: <strong class="text-primary">${email}</strong>
                 </p>
 
-                <form action="<c:url value='/verify-otp'/>" method="post">
+                <form action="<c:url value='/verify-otp'/>" method="post" class="needs-validation" novalidate>
                     <input type="hidden" name="email" value="${email}">
 
                     <div class="mb-4">
-                        <label for="otp" class="form-label fw-semibold text-center w-100">NHẬP MÃ XÁC THỰC (OTP)</label>
-                        <input type="text" class="form-control otp-input form-control-lg" id="otp" name="otp" maxlength="6" value="${not empty otpCode ? otpCode : ''}" placeholder="000000" required autofocus>
+                        <label for="otp" class="form-label fw-semibold text-center w-100">NHẬP MÃ XÁC THỰC (OTP) <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control otp-input form-control-lg" id="otp" name="otp" maxlength="6" pattern="[0-9]{6}" value="${not empty otpCode ? otpCode : ''}" placeholder="000000" required autofocus>
+                        <div class="invalid-feedback text-center">
+                            Vui lòng nhập đầy đủ 6 chữ số OTP.
+                        </div>
                         <div class="form-text text-center mt-2">Mã gồm 6 chữ số có hiệu lực trong vòng 5 phút</div>
                     </div>
 
@@ -67,4 +70,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function() {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
 </body>

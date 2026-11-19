@@ -28,12 +28,15 @@
                     Vui lòng nhập địa chỉ email đã đăng ký. Hệ thống sẽ gửi một mã xác nhận OTP gồm 6 số để bạn đặt lại mật khẩu mới.
                 </p>
 
-                <form action="<c:url value='/forgot-password'/>" method="post">
+                <form action="<c:url value='/forgot-password'/>" method="post" class="needs-validation" novalidate>
                     <div class="mb-4">
-                        <label for="email" class="form-label fw-semibold">Địa chỉ Email</label>
-                        <div class="input-group">
+                        <label for="email" class="form-label fw-semibold">Địa chỉ Email <span class="text-danger">*</span></label>
+                        <div class="input-group has-validation">
                             <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
-                            <input type="email" class="form-control" id="email" name="email" value="${email}" placeholder="example@gmail.com" required autofocus>
+                            <input type="email" class="form-control" id="email" name="email" value="${email}" placeholder="example@gmail.com" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" required autofocus>
+                            <div class="invalid-feedback">
+                                Vui lòng nhập địa chỉ email hợp lệ (ví dụ: user@example.com).
+                            </div>
                         </div>
                     </div>
 
@@ -50,4 +53,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function() {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
 </body>

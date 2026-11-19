@@ -22,16 +22,22 @@
                     </div>
                 </c:if>
 
-                <form action="<c:url value='/admin/video/insert'/>" method="post" enctype="multipart/form-data">
+                <form action="<c:url value='/admin/video/insert'/>" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="videoId" class="form-label fw-semibold">Mã Video (VideoId) <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control font-monospace" id="videoId" name="videoId" value="${video.videoId != null ? video.videoId : videoId}" placeholder="Ví dụ: vid01" required autofocus>
+                            <input type="text" class="form-control font-monospace" id="videoId" name="videoId" value="${video.videoId != null ? video.videoId : videoId}" pattern="^[a-zA-Z0-9_-]{2,50}$" placeholder="Ví dụ: vid01" required autofocus>
+                            <div class="invalid-feedback">
+                                Mã video từ 2-50 ký tự (chữ, số, gạch ngang, gạch dưới, không dấu).
+                            </div>
                         </div>
 
                         <div class="col-md-6">
                             <label for="title" class="form-label fw-semibold">Tiêu Đề Video <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="title" name="title" value="${video.title != null ? video.title : title}" placeholder="Nhập tiêu đề video" required>
+                            <input type="text" class="form-control" id="title" name="title" value="${video.title != null ? video.title : title}" minlength="3" placeholder="Nhập tiêu đề video" required>
+                            <div class="invalid-feedback">
+                                Vui lòng nhập tiêu đề video (tối thiểu 3 ký tự).
+                            </div>
                         </div>
 
                         <div class="col-md-6">
@@ -42,13 +48,16 @@
                                     <option value="${cat.categoryid}" ${(video.category != null && video.category.categoryid == cat.categoryid) || categoryId == cat.categoryid ? 'selected' : ''}>${cat.categoryname}</option>
                                 </c:forEach>
                             </select>
+                            <div class="invalid-feedback">
+                                Vui lòng chọn một danh mục cho video.
+                            </div>
                         </div>
 
                         <div class="col-md-6">
                             <label for="userId" class="form-label fw-semibold">Tác Giả (Người Đăng)</label>
                             <select class="form-select" id="userId" name="userId">
                                 <c:forEach items="${userList}" var="u">
-                                    <option value="${u.id}" ${sessionScope.account != null && sessionScope.account.id == u.id ? 'selected' : ''}>
+                                    <option value="${u.id}" ${(video.user != null && video.user.id == u.id) || (sessionScope.account != null && sessionScope.account.id == u.id) ? 'selected' : ''}>
                                         ${u.username} (${u.fullname != null ? u.fullname : 'N/A'})
                                     </option>
                                 </c:forEach>
@@ -111,4 +120,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function() {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
 </body>

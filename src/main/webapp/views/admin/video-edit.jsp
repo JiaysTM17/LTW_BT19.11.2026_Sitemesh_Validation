@@ -29,7 +29,7 @@
                     </div>
                 </c:if>
 
-                <form action="<c:url value='/admin/video/update'/>" method="post" enctype="multipart/form-data">
+                <form action="<c:url value='/admin/video/update'/>" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="videoId" class="form-label fw-semibold">Mã Video (Không được sửa)</label>
@@ -38,7 +38,10 @@
 
                         <div class="col-md-6">
                             <label for="title" class="form-label fw-semibold">Tiêu Đề Video <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="title" name="title" value="${video.title}" required>
+                            <input type="text" class="form-control" id="title" name="title" value="${video.title}" minlength="3" required>
+                            <div class="invalid-feedback">
+                                Vui lòng nhập tiêu đề video (tối thiểu 3 ký tự).
+                            </div>
                         </div>
 
                         <div class="col-md-6">
@@ -51,6 +54,9 @@
                                     </option>
                                 </c:forEach>
                             </select>
+                            <div class="invalid-feedback">
+                                Vui lòng chọn danh mục hợp lệ.
+                            </div>
                         </div>
 
                         <div class="col-md-6">
@@ -141,4 +147,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function() {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
 </body>

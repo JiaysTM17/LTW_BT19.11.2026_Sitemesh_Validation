@@ -24,14 +24,17 @@
                         </div>
                     </c:if>
 
-                    <form action="<c:url value='/admin/category/update'/>" method="post" enctype="multipart/form-data">
+                    <form action="<c:url value='/admin/category/update'/>" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                         <!-- ID ẩn -->
                         <input type="hidden" name="categoryid" value="${cate.categoryid}">
 
                         <!-- Tên danh mục -->
                         <div class="mb-3">
                             <label for="categoryname" class="form-label fw-semibold">Tên danh mục (Category name) <span class="text-danger">*</span>:</label>
-                            <input type="text" class="form-control" id="categoryname" name="categoryname" value="${cate.categoryname}" required>
+                            <input type="text" class="form-control" id="categoryname" name="categoryname" value="${cate.categoryname}" minlength="2" maxlength="50" required>
+                            <div class="invalid-feedback">
+                                Vui lòng nhập tên danh mục (tối thiểu 2 ký tự, tối đa 50 ký tự).
+                            </div>
                         </div>
 
                         <!-- Link ảnh online -->
@@ -94,4 +97,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    (function() {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
 </body>

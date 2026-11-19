@@ -30,23 +30,29 @@
                     </div>
                 </c:if>
 
-                <form action="<c:url value='/login'/>" method="post">
+                <form action="<c:url value='/login'/>" method="post" class="needs-validation" novalidate>
                     <div class="mb-3">
-                        <label for="username" class="form-label fw-semibold">Tên đăng nhập hoặc Email</label>
-                        <div class="input-group">
+                        <label for="username" class="form-label fw-semibold">Tên đăng nhập hoặc Email <span class="text-danger">*</span></label>
+                        <div class="input-group has-validation">
                             <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-                            <input type="text" class="form-control" id="username" name="username" value="${username}" placeholder="Nhập username hoặc email" required autofocus>
+                            <input type="text" class="form-control" id="username" name="username" value="${username}" placeholder="Nhập username hoặc email" minlength="3" required autofocus>
+                            <div class="invalid-feedback">
+                                Vui lòng nhập tên đăng nhập hoặc email (tối thiểu 3 ký tự).
+                            </div>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center">
-                            <label for="password" class="form-label fw-semibold mb-0">Mật khẩu</label>
+                            <label for="password" class="form-label fw-semibold mb-0">Mật khẩu <span class="text-danger">*</span></label>
                             <a href="<c:url value='/forgot-password'/>" class="small text-decoration-none">Quên mật khẩu?</a>
                         </div>
-                        <div class="input-group mt-1">
+                        <div class="input-group has-validation mt-1">
                             <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" minlength="6" required>
+                            <div class="invalid-feedback">
+                                Vui lòng nhập mật khẩu (tối thiểu 6 ký tự).
+                            </div>
                         </div>
                     </div>
 
@@ -68,4 +74,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function() {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
 </body>

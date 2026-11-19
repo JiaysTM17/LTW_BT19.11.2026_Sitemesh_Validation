@@ -37,27 +37,36 @@
                     Email khôi phục: <strong class="text-primary">${email}</strong>
                 </p>
 
-                <form action="<c:url value='/reset-password'/>" method="post">
+                <form id="resetPassForm" action="<c:url value='/reset-password'/>" method="post" class="needs-validation" novalidate>
                     <input type="hidden" name="email" value="${email}">
 
                     <div class="mb-3">
-                        <label for="otp" class="form-label fw-semibold">MÃ XÁC THỰC (OTP 6 số)</label>
-                        <input type="text" class="form-control otp-input" id="otp" name="otp" maxlength="6" value="${not empty otpCode ? otpCode : ''}" placeholder="000000" required autofocus>
+                        <label for="otp" class="form-label fw-semibold">MÃ XÁC THỰC (OTP 6 số) <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control otp-input" id="otp" name="otp" maxlength="6" pattern="[0-9]{6}" value="${not empty otpCode ? otpCode : ''}" placeholder="000000" required autofocus>
+                        <div class="invalid-feedback text-center">
+                            Vui lòng nhập đúng mã OTP gồm 6 chữ số.
+                        </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="newPassword" class="form-label fw-semibold">Mật khẩu mới</label>
-                        <div class="input-group">
+                        <label for="newPassword" class="form-label fw-semibold">Mật khẩu mới <span class="text-danger">*</span></label>
+                        <div class="input-group has-validation">
                             <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                            <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Tối thiểu 6 ký tự" required>
+                            <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Tối thiểu 6 ký tự" minlength="6" required>
+                            <div class="invalid-feedback">
+                                Mật khẩu mới phải có tối thiểu 6 ký tự.
+                            </div>
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label for="confirmPassword" class="form-label fw-semibold">Xác nhận mật khẩu mới</label>
-                        <div class="input-group">
+                        <label for="confirmPassword" class="form-label fw-semibold">Xác nhận mật khẩu mới <span class="text-danger">*</span></label>
+                        <div class="input-group has-validation">
                             <span class="input-group-text"><i class="fa-solid fa-check-double"></i></span>
-                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu mới" required>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu mới" minlength="6" required>
+                            <div class="invalid-feedback" id="confirmPasswordFeedback">
+                                Mật khẩu xác nhận không khớp.
+                            </div>
                         </div>
                     </div>
 
@@ -76,4 +85,37 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function() {
+            'use strict';
+            const form = document.getElementById('resetPassForm');
+            const newPass = document.getElementById('newPassword');
+            const confirmPass = document.getElementById('confirmPassword');
+            const confirmFeedback = document.getElementById('confirmPasswordFeedback');
+
+            function checkMatch() {
+                if (newPass.value && confirmPass.value) {
+                    if (newPass.value !== confirmPass.value) {
+                        confirmPass.setCustomValidity('Mật khẩu không khớp!');
+                        confirmFeedback.textContent = 'Mật khẩu xác nhận không khớp!';
+                    } else {
+                        confirmPass.setCustomValidity('');
+                    }
+                }
+            }
+
+            newPass.addEventListener('input', checkMatch);
+            confirmPass.addEventListener('input', checkMatch);
+
+            form.addEventListener('submit', function(event) {
+                checkMatch();
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        })();
+    </script>
 </body>
