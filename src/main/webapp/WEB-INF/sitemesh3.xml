@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemesh>
+    <!-- Exclude binary streams and static assets from decoration -->
+    <mapping path="/assets/*" exclude="true" />
+    <mapping path="/image*" exclude="true" />
+    <mapping path="/file*" exclude="true" />
+    <mapping path="/api*" exclude="true" />
+
+    <!-- Admin Decorator -->
+    <mapping path="/admin/*" name="admin" decorator="/decorators/admin.jsp" />
+
+    <!-- Web / Public Decorator -->
+    <mapping path="/*" name="web" decorator="/decorators/web.jsp" />
+</sitemesh>

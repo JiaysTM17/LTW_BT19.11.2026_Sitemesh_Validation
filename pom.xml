@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>vn.iotstar</groupId>
-    <artifactId>24110032_TruongGiaKiet_BT16.11.2026</artifactId>
+    <artifactId>24110032_TruongGiaKiet_BT19.11.2026</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>24110032_TruongGiaKiet_BT16.11.2026</name>
-    <description>Web Programming - OTP Auth, Hash Password, Video Management JPA 3.0</description>
+    <name>24110032_TruongGiaKiet_BT19.11.2026</name>
+    <description>Web Programming - Sitemesh 3.2.2 Decorator Bootstrap and Form Validation</description>
 
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
@@ -131,10 +131,17 @@
             <version>2.0.3</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- 14. Sitemesh 3.2.2 Web Filter (Jakarta EE 10 Compatible) -->
+        <dependency>
+            <groupId>org.sitemesh</groupId>
+            <artifactId>sitemesh-webfilter</artifactId>
+            <version>3.2.2</version>
+        </dependency>
     </dependencies>
 
     <build>
-        <finalName>24110032_TruongGiaKiet_BT16.11.2026</finalName>
+        <finalName>24110032_TruongGiaKiet_BT19.11.2026</finalName>
         <plugins>
             <!-- Maven Compiler Plugin -->
             <plugin>
