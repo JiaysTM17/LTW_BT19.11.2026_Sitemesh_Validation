@@ -50,7 +50,7 @@ public class User implements Serializable {
     @Column(name = "phone", length = 20)
     private String phone;
 
-    @Column(name = "avatar", length = 255)
+    @Column(name = "avatar", length = 500)
     private String avatar;
 
     @Column(name = "roleid")
@@ -145,6 +145,14 @@ public class User implements Serializable {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getImages() {
+        return avatar;
+    }
+
+    public void setImages(String images) {
+        this.avatar = images;
     }
 
     public int getRoleid() {
