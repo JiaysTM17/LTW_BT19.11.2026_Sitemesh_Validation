@@ -46,6 +46,11 @@
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
+                                    <a class="dropdown-item" href="<c:url value='/profile'/>">
+                                        <i class="fa-solid fa-id-card me-2 text-primary"></i>Hồ sơ cá nhân
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item text-danger" href="<c:url value='/logout'/>">
                                         <i class="fa-solid fa-right-from-bracket me-2"></i>Đăng xuất
                                     </a>
