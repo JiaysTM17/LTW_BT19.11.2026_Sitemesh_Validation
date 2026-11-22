@@ -43,6 +43,26 @@
   - **Form Insert/Edit Category:** Kiểm tra tên danh mục không rỗng, độ dài tối thiểu 2 ký tự, xử lý an toàn dữ liệu số trạng thái `status` và `categoryid`.
   - **Form Insert/Edit Video:** Kiểm tra mã video (không rỗng, định dạng ký tự hợp lệ, kiểm tra trùng lặp ID khi thêm mới), kiểm tra tiêu đề video, bắt buộc chọn danh mục `categoryId`, giữ lại dữ liệu form khi có lỗi.
 
+#### 3. Xây dựng chức năng Profile của User (Upload Cloudinary Multipart & Xác thực OTP Email mới):
+- **Quản lý Hồ sơ cá nhân (User Profile):**
+  - Xem và cập nhật thông tin: Họ và tên (`fullname`), Số điện thoại (`phone`).
+  - Tích hợp link "Hồ sơ cá nhân" trên thanh điều hướng Navbar (dropdown avatar người dùng).
+- **Upload ảnh đại diện (Avatar/Images) lên Cloudinary bằng Multipart:**
+  - Tích hợp `Cloudinary SDK 1.39.0` trong `pom.xml`.
+  - Xử lý multipart upload với Servlet `@MultipartConfig` trong `ProfileController`.
+  - Đẩy ảnh trực tiếp lên **Cloudinary Cloud** qua `CloudinaryUtil`, lưu `secure_url` vào cơ sở dữ liệu.
+  - Hỗ trợ xem trước ảnh tức thì (Live Avatar Preview) trên giao diện trước khi lưu.
+- **Xác thực OTP khi cập nhật sang Email mới:**
+  - Nếu người dùng giữ nguyên email: Lưu thông tin ngay lập tức.
+  - Nếu người dùng nhập Email mới:
+    - Kiểm tra tính hợp lệ và chống trùng lặp email với tài khoản khác trong hệ thống.
+    - Hệ thống tự động sinh mã OTP 6 chữ số và gửi qua Jakarta Mail tới **địa chỉ Email mới**.
+    - Chuyển hướng sang giao diện xác thực OTP (`/profile/verify-otp`).
+    - Chỉ cập nhật Email mới vào Database khi người dùng nhập chính xác mã OTP.
+    - Hỗ trợ nút gửi lại mã OTP (`action=resend`) tiện lợi.
+- **Quản lý giao diện bằng Sitemesh Decorator 3:**
+  - Toàn bộ giao diện `views/profile.jsp` và `views/profile-verify-otp.jsp` được Sitemesh tự động bọc trong Decorator Bootstrap 5 (`decorators/web.jsp`), đảm bảo tính nhất quán và chuyên nghiệp.
+
 ---
 
 ### HƯỚNG DẪN CÀI ĐẶT & CHẠY DỰ ÁN
